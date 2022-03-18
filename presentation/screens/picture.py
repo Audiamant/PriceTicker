@@ -11,7 +11,7 @@ SCREEN_WIDTH = 250
 FONT_SMALL = ImageFont.truetype(
     os.path.join(os.path.dirname(__file__), os.pardir, 'Roses.ttf'), 8)
 FONT_LARGE = ImageFont.truetype(
-    os.path.join(os.path.dirname(__file__), os.pardir, 'PixelSplitter-Bold.ttf'), 26)
+    os.path.join(os.path.dirname(__file__), os.pardir, 'PixelSplitter-Bold.ttf'), 16)
 
 class Picture(Observer):
 
@@ -20,7 +20,7 @@ class Picture(Observer):
         self.filename = filename
         self.mode = mode
 
-    def update(self, prices):
+    def update(self, prices, name):
         image = Image.new('1', (SCREEN_WIDTH, SCREEN_HEIGHT), 255)
         screen_draw = ImageDraw.Draw(image)
         if self.mode == "candle":
@@ -30,11 +30,11 @@ class Picture(Observer):
             Plot.line(last_prices, size=(SCREEN_WIDTH - 42, 93), position=(42, 0), draw=screen_draw)
 
         flatten_prices = [item for sublist in prices for item in sublist]
-        Plot.y_axis_labels(flatten_prices, FONT_SMALL, (0, 0), (38, 89), draw=screen_draw)
+        Plot.y_axis_labels(flatten_prices, FONT_SMALL, (0, 3), (38, 89), draw=screen_draw)
         screen_draw.line([(10, 98), (240, 98)])
         screen_draw.line([(39, 4), (39, 94)])
-        screen_draw.line([(60, 102), (60, 119)])
-        Plot.caption(flatten_prices[len(flatten_prices) - 1], 95, SCREEN_WIDTH, FONT_LARGE, screen_draw)
+        #screen_draw.line([(90, 102), (90, 119)])
+        Plot.caption(flatten_prices[len(flatten_prices) - 1], 102, SCREEN_WIDTH, FONT_LARGE, screen_draw, name)
         image.save(self.filename)
 
     def close(self):

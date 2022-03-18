@@ -29,12 +29,23 @@ class Config:
         return screens_conf
 
     @property
-    def refresh_interval(self):
-        return self._conf.getint('base', 'refresh_interval_minutes', fallback=15) * 60
+    def refresh_display_interval(self):
+        return self._conf.getint('base', 'refresh_display_sek', fallback=15)
+
+    @property
+    def refresh_data_interval(self):
+        return self._conf.getint('base', 'refresh_data_min', fallback=15) * 60
 
     @property
     def currency(self):
         return self._conf.get('base', 'currency', fallback='BTC')
+
+    @property
+    def stocks(self):
+        stocks = []
+        for name, value in self._conf.items('stocks'):
+            stocks.append((name, value))
+        return stocks
 
     @staticmethod
     def _load_screens(file_name):

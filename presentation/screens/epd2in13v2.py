@@ -1,4 +1,5 @@
 import os
+from unicodedata import name
 
 from PIL import Image, ImageDraw, ImageFont
 try:
@@ -14,7 +15,7 @@ SCREEN_WIDTH = 250
 FONT_SMALL = ImageFont.truetype(
     os.path.join(os.path.dirname(__file__), os.pardir, 'Roses.ttf'), 8)
 FONT_LARGE = ImageFont.truetype(
-    os.path.join(os.path.dirname(__file__), os.pardir, 'PixelSplitter-Bold.ttf'), 26)
+    os.path.join(os.path.dirname(__file__), os.pardir, 'PixelSplitter-Bold.ttf'), 20)
 
 class Epd2in13v2(Observer):
 
@@ -30,10 +31,10 @@ class Epd2in13v2(Observer):
         epd = epd2in13_V2.EPD()
         epd.init(epd.FULL_UPDATE)
         epd.Clear(0xFF)
-        epd.init(epd.PART_UPDATE)
+        # epd.init(epd.PART_UPDATE)
         return epd
 
-    def form_image(self, prices, screen_draw):
+    def form_image(self, prices, screen_draw, name):
         screen_draw.rectangle((0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), fill="#ffffff")
         screen_draw = self.screen_draw
         if self.mode == "candle":
@@ -46,15 +47,16 @@ class Epd2in13v2(Observer):
         Plot.y_axis_labels(flatten_prices, FONT_SMALL, (0, 0), (38, 89), draw=screen_draw)
         screen_draw.line([(10, 98), (240, 98)])
         screen_draw.line([(39, 4), (39, 94)])
-        screen_draw.line([(60, 102), (60, 119)])
-        Plot.caption(flatten_prices[len(flatten_prices) - 1], 95, SCREEN_WIDTH, FONT_LARGE, screen_draw)
+        # screen_draw.line([(60, 102), (60, 119)])
+        Plot.caption(flatten_prices[len(flatten_prices) - 1] ,100 , SCREEN_WIDTH, FONT_LARGE, screen_draw, name)
 
-    def update(self, data):
-        self.form_image(data, self.screen_draw)
+    def update(self, data, name):
+        self.form_image(data, self.screen_draw, name)
         screen_image_rotated = self.screen_image.rotate(180)
         # TODO: add a way to switch bewen partial and full update
         # epd.presentation(epd.getbuffer(screen_image_rotated))
-        self.epd.displayPartial(self.epd.getbuffer(screen_image_rotated))
+        # self.epd.displayPartial(self.epd.getbuffer(screen_image_rotated))
+        self.epd.display(self.epd.getbuffer(screen_image_rotated))
 
     def close(self):
         epd2in13_V2.epdconfig.module_exit()

@@ -49,7 +49,7 @@ class Plot:
         return text_width
 
     @staticmethod                                                      #offset name         #offset price
-    def caption(price, y, screen_width, font, draw, name, fill=None, currency_offset=3, price_offset=4):
+    def caption(price, y, screen_width, font, draw, name, fill=None, currency_offset=4, price_offset=4):
         #draw.text((currency_offset, y), config.currency[:3], font=font, fill=fill)
         draw.text((currency_offset, y), name, font=font, fill=fill)
         price_text = Plot.human_format(price, 2, 2) 

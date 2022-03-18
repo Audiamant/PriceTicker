@@ -1,11 +1,10 @@
-# Zero BTC Screen
+# Zero Stocks-Screen
 
-Bitcoin (or any other currency) stock price for your RPi Zero
+Stocks price display for your RPi Zero<br>
+Forked from: https://github.com/dr-mod/zero-btc-screen
 
-![display](docs/display_1.jpeg)
-![display](docs/display_2.jpeg)
-![display](docs/display_3.jpeg)
-![display](docs/display_4.jpeg)
+![display](docs/output.gif)
+![display](docs/display_5.jpeg)
 
 ## Hardware
 
@@ -36,8 +35,8 @@ Bitcoin (or any other currency) stock price for your RPi Zero
 2. Install dependencies
     ```
     sudo apt update
-    sudo apt-get install python3-pip python3-pil python3-numpy git
-    pip3 install RPi.GPIO spidev
+    sudo apt-get install python3-pip python3-pil python3-numpy python3-pandas git
+    pip3 install RPi.GPIO spidev yfinance
     ```
 
 3. Install drivers for your display (you don't need to install both)
@@ -52,7 +51,7 @@ Bitcoin (or any other currency) stock price for your RPi Zero
     ```
 4. Download Zero BTC Screen
     ```
-    git clone https://github.com/dr-mod/zero-btc-screen.git ~/zero-btc-screen
+    git clone https://github.com/wiesnerroyal/zero-btc-screen.git ~/zero-btc-screen
     ```
 5. Run it
     ```
@@ -62,52 +61,59 @@ Bitcoin (or any other currency) stock price for your RPi Zero
 
 ## Screen configuration
 
-The application supports multiple types of e-ink screens, and an additional "picture" screen.
-
-To configure which display(s) to use, configuration.cfg should be modified. In the following example an e-ink epd2in13v2
-and "picture" screens are select:
+Add your Stocks like below in the configuration.cfg file.
+You can also change the Display iteration delay and refresh data delay.
 
 ```cfg
 [base]
-console_logs             : false
-#logs_file               : /tmp/zero-btc-screen.log
-dummy_data               : false
-refresh_interval_minutes : 15
-currency                 : BTC
+console_logs          : false
+dummy_data            : false
+refresh_display_sek   : 60
+refresh_data_min      : 15
+#logs_file            : /tmp/zero-btc-screen.log
 
 # Enabled screens or devices
 screens : [
-    epd2in13v2
-#    epd2in13v3
+#    epd2in13v2
+     epd2in13v3
 #    epd2in13bv3
 #    epd2in7
 #    epd3in7
-    picture
+#    picture
 #    inkyWhatRBW
   ]
 
 # Configuration per screen
 # This doesn't make any effect if screens are not enabled above
 [epd2in13v2]
-mode : candle
+mode : line
 
 [epd2in13v3]
-mode : candle
+mode : line
 
 [epd2in13bv3]
-mode : line
+mode  : line
 
 [epd2in7]
 mode : candle
 
 [epd3in7]
-mode : candle
+mode  : candle
 
 [picture]
+mode : line
 filename : /home/pi/output.png
 
 [inkyWhatRBW]
-mode : candle
+mode : line
+
+[stocks]
+BTC         : BTC-EUR
+MSCI-WORLD  : EUNL.DE
+APPLE       : APC.F
+GOOGLE      : ABEA.DE
+TESLA       : TL0.DE
+MICROSOFT   : MSF.DE
 ```
 
 ### Autostart
@@ -118,27 +124,27 @@ To make it run on startup you can choose from 2 options:
     1. `sudo nano /etc/rc.local`
     2. Add one the following before `exit 0`
    ```
-   /usr/bin/python3 /home/pi/zero-btc-screen/main.py &
+   /usr/bin/python3 /home/pi/stocks-screen/main.py &
    ```
    conversely, you can run in `screen` you can install it with `sudo apt-get install screen`
    ```
-   su - pi -c "/usr/bin/screen -dm sh -c '/usr/bin/python3 /home/pi/zero-btc-screen/main.py'"
+   su - pi -c "/usr/bin/screen -dm sh -c '/usr/bin/python3 /home/pi/stocks-screen/main.py'"
    ```
 2. Using the system's services daemon
     1. Create a new service configuration file
        ```
-        sudo nano /etc/systemd/system/btc-screen.service
+        sudo nano /etc/systemd/system/stocks-screen.service
         ```
     2. Copy and paste the following into the service configuration file and change any settings to match your
        environment
        ```
         [Unit]
-        Description=zero-btc-screen
+        Description=stocks-screen
         After=network.target
  
         [Service]
         ExecStart=/usr/bin/python3 -u main.py
-        WorkingDirectory=/home/pi/zero-btc-screen
+        WorkingDirectory=/home/pi/stocks-screen
         StandardOutput=inherit
         StandardError=inherit
         Restart=always
@@ -159,10 +165,11 @@ To make it run on startup you can choose from 2 options:
        If you need to troubleshoot you can use the logging configurations of this program (mentioned below).
        Alternatively, you can check to see if there is any output in the system service logging.
        ```
-        sudo journalctl -f -u btc-screen.service
+        sudo journalctl -f -u stocks-screen.service
        ```
 
 ### Support the project
-If you would like to support this project and and keep me caffeinated, you can do it here:
+This projekt ist just a Fork. The heavy work was done by dr-mod so please buy him some coffee.
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/drmod)
+

@@ -1,36 +1,41 @@
-import json
-import random
 import time
-from datetime import datetime, timezone, timedelta
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
-
-from config.builder import Builder
-from config.config import config
+import yfinance as yf
 from logs import logger
+from config.config import config
+from config.builder import Builder
 from presentation.observer import Observable
+from datetime import datetime, timezone, timedelta
 
-DATA_SLICE_DAYS = 1
-DATETIME_FORMAT = "%Y-%m-%dT%H:%M"
+DATETIME_FORMAT = "%Y-%m-%d"
 
 
 def get_dummy_data():
     logger.info('Generating dummy data')
 
-
-
-def fetch_prices():
-    logger.info('Fetching prices')
-    timeslot_end = datetime.now(timezone.utc)
-    end_date = timeslot_end.strftime(DATETIME_FORMAT)
-    start_data = (timeslot_end - timedelta(days=DATA_SLICE_DAYS)).strftime(DATETIME_FORMAT)
-    url = f'https://production.api.coindesk.com/v2/price/values/{config.currency}?ohlc=true&start_date={start_data}&end_date={end_date}'
-    req = Request(url)
-    data = urlopen(req).read()
-    external_data = json.loads(data)
-    prices = [entry[1:] for entry in external_data['data']['entries']]
+def api_request(stock, start):
+    prices = yf.download(stock,
+                        start=start,
+                        interval = "2m",
+                        progress = False,
+                        show_errors=False)
     return prices
 
+def fetch_prices(stock):
+    logger.info('Fetching prices')
+    timeslot_end = datetime.now(timezone.utc)
+    start_date = timeslot_end.strftime(DATETIME_FORMAT)
+    prices = api_request(stock, start_date)
+
+    if prices.empty:
+        if timeslot_end.weekday() == 7:
+            start_date = (timeslot_end - timedelta(days=3)).strftime(DATETIME_FORMAT)
+            prices = api_request(stock, start_date)
+        else:
+            start_date = (timeslot_end - timedelta(days=2)).strftime(DATETIME_FORMAT)
+            prices = api_request(stock, start_date)
+
+    prices = prices[['Open', 'High', 'Low','Close']].values.tolist()
+    return prices
 
 def main():
     logger.info('Initialize')
@@ -41,13 +46,19 @@ def main():
 
     try:
         while True:
-            try:
-                prices = [entry[1:] for entry in get_dummy_data()] if config.dummy_data else fetch_prices()
-                data_sink.update_observers(prices)
-                time.sleep(config.refresh_interval)
-            except (HTTPError, URLError) as e:
-                logger.error(str(e))
-                time.sleep(5)
+            prices_list = []
+            stocks_list = config.stocks
+            for stock in stocks_list:
+                prices_list.append(fetch_prices(stock[1]))
+            start_time = time.time()
+            while time.time() < start_time + config.refresh_data_interval:
+                for i in range(len(stocks_list)):
+                    try:
+                        data_sink.update_observers(prices_list[i], stocks_list[i][0])
+                        time.sleep(config.refresh_display_interval)
+                    except Exception as e: 
+                        logger.error(str(e))
+                        time.sleep(5)
     except IOError as e:
         logger.error(str(e))
     except KeyboardInterrupt:
