@@ -41,13 +41,13 @@ Forked from: https://github.com/dr-mod/zero-btc-screen
     git clone https://github.com/waveshare/e-Paper.git ~/e-Paper
     pip3 install ~/e-Paper/RaspberryPi_JetsonNano/python/
     ```
-4. Download Zero BTC Screen
+4. Download Stocks Screen
     ```
-    git clone https://github.com/wiesnerroyal/zero-btc-screen.git ~/zero-btc-screen
+    git clone https://github.com/wiesnerroyal/stocks-screen.git ~/stocks-screen
     ```
 5. Run it
     ```
-    python3 ~/zero-btc-screen/main.py
+    python3 ~/stocks-screen/main.py
     ```
 
 
