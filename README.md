@@ -33,6 +33,7 @@ Forked from: https://github.com/dr-mod/zero-btc-screen
     sudo apt update
     sudo apt-get install python3-pip python3-pil python3-numpy python3-pandas git
     pip3 install RPi.GPIO spidev yfinance
+    sudo apt-get install libatlas-base-dev
     ```
 
 3. Install drivers for your display (you don't need to install both)
@@ -48,19 +49,6 @@ Forked from: https://github.com/dr-mod/zero-btc-screen
 5. Run it
     ```
     python3 ~/PriceTicker/main.py
-    ```
-      
-6. If Priceticker does not start please run 
-    ```
-    sudo journalctl -f -u PriceTicker.service
-    ```
-   If you get this error  
-   `Original error was: libcblas.so.3: cannot open shared object file: No such file or directory`
-
-   
-7. You need to install this package with necessary shared object for it to work
-    ```   
-    sudo apt-get install libatlas-base-dev
     ```
 
 ## Screen configuration
