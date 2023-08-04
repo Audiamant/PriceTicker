@@ -1,4 +1,4 @@
-# Zero Stocks-Screen
+# Zero PriceTicker
 
 Stocks price display for your RPi Zero<br>
 Forked from: https://github.com/dr-mod/zero-btc-screen
