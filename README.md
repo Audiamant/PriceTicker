@@ -121,11 +121,7 @@ ALGO        : ALGO-USD
 #TESLA       : TL0.DE
 #MICROSOFT   : MSF.DE
 ```
-### RESTART PriceTicker
 
-```
-sudo shutdown -r now 
-```
 ### Autostart
 
 To make it run on startup you can choose from 2 options:
@@ -140,43 +136,48 @@ To make it run on startup you can choose from 2 options:
    ```
    su - pi -c "/usr/bin/screen -dm sh -c '/usr/bin/python3 /home/pi/PriceTicker/main.py'"
    ```
-2. Using the system's services daemon
-    1. Create a new service configuration file
-       ```
-        sudo nano /etc/systemd/system/PriceTicker.service
-        ```
-    2. Copy and paste the following into the service configuration file and change any settings to match your
-       environment
-       ```
-        [Unit]
-        Description=PriceTicker
-        After=network.target
+   2. Using the system's services daemon
+       1. Create a new service configuration file
+          ```
+           sudo nano /etc/systemd/system/PriceTicker.service
+           ```
+       2. Copy and paste the following into the service configuration file and change any settings to match your
+          environment
+          ```
+           [Unit]
+           Description=PriceTicker
+           After=network.target
  
-        [Service]
-        ExecStart=/usr/bin/python3 -u main.py
-        WorkingDirectory=/home/pi/PriceTicker
-        StandardOutput=inherit
-        StandardError=inherit
-        Restart=always
-        User=pi
+           [Service]
+           ExecStart=/usr/bin/python3 -u main.py
+           WorkingDirectory=/home/pi/PriceTicker
+           StandardOutput=inherit
+           StandardError=inherit
+           Restart=always
+           User=pi
  
-        [Install]
-        WantedBy=multi-user.target
-        ```
-    3. Enable the service so that it starts whenever the RPi is rebooted
-       ```
-        sudo systemctl enable PriceTicker.service
-       ```
-    4. Start the service and enjoy!
-       ```
-        sudo systemctl start PriceTicker.service
-       ```
+           [Install]
+           WantedBy=multi-user.target
+           ```
+       3. Enable the service so that it starts whenever the RPi is rebooted
+          ```
+           sudo systemctl enable PriceTicker.service
+          ```
+       4. Start the service and enjoy!
+          ```
+           sudo systemctl start PriceTicker.service
+          ```
+       5. RESTART PriceTicker
+           ```
+           sudo shutdown -r now 
+           ```
 
-       If you need to troubleshoot you can use the logging configurations of this program (mentioned below).
-       Alternatively, you can check to see if there is any output in the system service logging.
-       ```
-        sudo journalctl -f -u PriceTicker.service
-       ```
+          If you need to troubleshoot you can use the logging configurations of this program (mentioned below).
+          Alternatively, you can check to see if there is any output in the system service logging.
+       
+           ```
+           sudo journalctl -f -u PriceTicker.service
+           ```
 
 ### Support the project
 This projekt ist just a Fork. The heavy work was done by dr-mod so please buy him some coffee.
