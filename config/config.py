@@ -5,7 +5,7 @@ __all__ = ('config', 'Config')
 
 
 class Config:
-    def __init__(self, file_name=os.path.join(os.path.dirname(__file__), os.pardir, 'configuration.cfg')):
+    def __init__(self, file_name=os.path.join(os.path.dirname(__file__), os.pardir, 'config.cfg')):
         self._conf = self._load_screens(file_name)
 
     @property
